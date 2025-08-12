@@ -10,9 +10,17 @@ use Should\Constraint\IteratesLike;
 /**
  * @param iterable<mixed,mixed> $expected
  */
-function shouldIterateLike(iterable $expected, bool $rewindably = false,  string $message = ''): ShouldIterateLike
+function shouldIterateLike(iterable $expected, bool $repeatedly = false, string $message = ''): ShouldIterateLike
 {
-    return new ShouldIterateLike($expected, $rewindably, $message);
+    return new ShouldIterateLike($expected, $repeatedly, $message);
+}
+
+/**
+ * @param iterable<mixed,mixed> $expected
+ */
+function shouldRepeatedlyIterateLike(iterable $expected, string $message = ''): ShouldIterateLike
+{
+    return new ShouldIterateLike($expected, true, $message);
 }
 
 class ShouldIterateLike extends ShouldSatisfy
@@ -22,10 +30,10 @@ class ShouldIterateLike extends ShouldSatisfy
      */
     public function __construct(
         iterable $expected,
-        bool $rewindably = false,
+        bool $repeatedly = false,
         string $message = '',
     ) {
-        parent::__construct(new IteratesLike($expected, $rewindably), $message);
+        parent::__construct(new IteratesLike($expected, $repeatedly), $message);
     }
 
     /**
