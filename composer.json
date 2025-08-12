@@ -1,0 +1,48 @@
+{
+  "name": "linepogl/phpunit-should",
+  "description": "A PHPUnit extension with enhanced constraints ready for the pipe operator.",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "pipe",
+    "constraint",
+    "phpunit"
+  ],
+  "homepage": "https://github.com/linepogl/impartial-pipes",
+  "authors": [
+    {
+      "name": "Lazare Inepologlou",
+      "email": "linepogl@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Should\\": "src/"
+    },
+    "files": [
+      "bootstrap.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tst/"
+    }
+  },
+  "require": {
+    "php": "^8.4",
+    "phpunit/phpunit": "^12.3"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "friendsofphp/php-cs-fixer": "^3.85"
+  },
+  "scripts": {
+    "phpunit": "vendor/bin/phpunit --testsuite=unit",
+    "phpunit:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite=unit --coverage-cobertura=var/cache/.phpunit/cobertura.xml && php dev/coverage.php var/cache/.phpunit/cobertura.xml",
+    "phpunit:php85": "vendor/bin/phpunit --testsuite=unit85",
+    "phpunit:php85:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite=unit85 --coverage-cobertura=var/cache/.phpunit/cobertura.unit85.xml && php dev/coverage.php var/cache/.phpunit/cobertura.unit85.xml",
+    "cs:fix": "php-cs-fixer fix --show-progress=dots --verbose ",
+    "cs:validate": "php-cs-fixer fix --show-progress=none --dry-run --no-interaction --stop-on-violation",
+    "phpstan": "phpstan --memory-limit=4G"
+  }
+}
