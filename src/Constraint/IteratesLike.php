@@ -15,14 +15,14 @@ final class IteratesLike extends AbstractConstraint
      */
     public function __construct(
         private readonly iterable $expected,
-        private readonly bool $repeatedly = false,
+        private readonly bool $rewindably = false,
     ) {
     }
 
     #[Override]
     public function toString(): string
     {
-        return 'iterates' . ($this->repeatedly ? ' repeatedly' : '') . ' like ' . Exporter::export($this->expected);
+        return ($this->rewindably ? 'rewindably ' : '') . 'iterates like ' . Exporter::export($this->expected);
     }
 
     #[Override]
@@ -43,7 +43,7 @@ final class IteratesLike extends AbstractConstraint
         }
         Assert::assertEquals($expectedArray, $actualArray);
 
-        if ($this->repeatedly) {
+        if ($this->rewindably) {
             iterator_to_array($actual); // iterate once more to see if it is rewindable
         }
     }
