@@ -1,5 +1,5 @@
 {
-  "name": "linepogl/phpunit-should",
+  "name": "linepogl/should",
   "description": "A PHPUnit extension with enhanced constraints ready for the pipe operator.",
   "type": "library",
   "license": "MIT",
