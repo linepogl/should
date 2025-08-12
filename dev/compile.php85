@@ -7,14 +7,15 @@ use function ImpartialPipes\p_filter_out;
 use function ImpartialPipes\p_foreach;
 use function ImpartialPipes\p_implode;
 use function ImpartialPipes\p_map;
-use function ImpartialPipes\p_take_while;
 
 require __DIR__.'/../vendor/autoload.php';
 
 new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__.'/../tst'))
-    |> p_filter(static fn(SplFileInfo $file) => $file->isFile() && $file->getExtension() === 'php' && basename($file->getPath()) !== 'tst')
+    |> p_filter(static fn(SplFileInfo $file) => $file->isFile() && str_ends_with($file->getBasename(), 'Test.php'))
     |> p_foreach(static function (SplFileInfo $file) {
-        $dir = substr(realpath($file->getPath()), strlen(realpath(__DIR__.'/../tst')) + 1);
+        $dir = substr(realpath($file->getPath()), strlen(realpath(__DIR__.'/../tst')));
+
+        echo "Compiling Test $dir/{$file->getBasename()}\n";
 
         $content = file_get_contents($file->getPathname());
         if ($file->getBasename() !== 'pipe_Test.php') {

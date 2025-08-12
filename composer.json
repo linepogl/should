@@ -34,7 +34,8 @@
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",
-    "friendsofphp/php-cs-fixer": "^3.85"
+    "friendsofphp/php-cs-fixer": "^3.85",
+    "linepogl/impartial-pipes": "^0.3.0"
   },
   "scripts": {
     "phpunit": "vendor/bin/phpunit --testsuite=unit",
