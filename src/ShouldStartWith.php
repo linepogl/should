@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Should;
 
 use Override;
-use PHPUnit\Framework\Constraint\IsEqual;
-use PHPUnit\Framework\Constraint\IsIdentical;
 use PHPUnit\Framework\Constraint\StringStartsWith;
 
 function shouldStartWith(string $expected, string $message = ''): ShouldStartWith

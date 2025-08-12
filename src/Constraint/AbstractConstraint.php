@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Should\Constraint;
 
 use Override;
-use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\ExpectationFailedException;
 

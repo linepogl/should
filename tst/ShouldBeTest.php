@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Tests;
 
 use DateTime;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldStartWith;
 use function Should\shouldThrow;

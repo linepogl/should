@@ -6,10 +6,7 @@ namespace Should\Constraint;
 
 use Override;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\Constraint\Constraint;
-use PHPUnit\Framework\Constraint\IsEqual;
 use PHPUnit\Util\Exporter;
-use function Should\shouldBe;
 
 final class Is extends AbstractConstraint
 {

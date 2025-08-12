@@ -45,7 +45,7 @@ class ShouldBeLikeTest extends TestCase
         pipe([])->to(shouldBeLike([]));
         pipe([])->to(shouldBeLike([shouldBeUndefined()]));
         shouldThrow(ExpectationFailedException::class)(
-            fn () =>pipe([1])->to(shouldBeLike([]))
+            fn () => pipe([1])->to(shouldBeLike([]))
         );
 
         pipe([1, 2, 3])->to(shouldBeLike([1, 2, 3]));
