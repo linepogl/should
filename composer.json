@@ -20,7 +20,16 @@
       "Should\\": "src/"
     },
     "files": [
-      "bootstrap.php"
+      "src/ShouldSatisfy.php",
+      "src/ShouldBe.php",
+      "src/ShouldBeIdenticalTo.php",
+      "src/ShouldBeA.php",
+      "src/ShouldMatch.php",
+      "src/ShouldBeLike.php",
+      "src/ShouldIterateLike.php",
+      "src/ShouldStartWith.php",
+      "src/ShouldThrow.php",
+      "src/ShouldBeUndefined.php"
     ]
   },
   "autoload-dev": {

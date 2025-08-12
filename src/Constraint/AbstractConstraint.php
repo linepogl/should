@@ -18,17 +18,15 @@ abstract class AbstractConstraint extends Constraint
     {
         try {
             $this->doEvaluate($other);
-        } catch (AssertionFailedError $ex) {
+        } catch (ExpectationFailedException $ex) {
             if ($returnResult) {
                 return false;
             }
             throw new ExpectationFailedException(
-                sprintf(
-                    "Failed asserting that %s.\n%s",
-                    $this->failureDescription($other),
-                    $ex->getMessage(),
-                ),
-                $ex instanceof ExpectationFailedException ? $ex->getComparisonFailure() : null,
+                '' === $description
+                ? sprintf("Failed asserting that %s.", $this->failureDescription($other))
+                : $description,
+                $ex->getComparisonFailure(),
             );
         }
         return $returnResult ?: null;

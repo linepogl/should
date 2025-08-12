@@ -19,19 +19,25 @@ class ShouldBeATest extends TestCase
 {
     public function test_should_be_a(): void
     {
-        pipe(new DateTime())->to(shouldBeA(DateTime::class));
-
-        pipe(fn () => pipe(new DateTime())->to(shouldBeA(DateInterval::class)))
-        ->to(shouldThrow(ExpectationFailedException::class));
+        shouldBeA(DateTime::class)(
+            new DateTime()
+        );
+        shouldThrow(ExpectationFailedException::class) (
+            fn () => shouldBeA(DateInterval::class)(new DateTime())
+        );
     }
 
     public function test_describe(): void
     {
-        pipe(shouldBeA(DateTime::class)->toString())->to(shouldBe('is an instance of class DateTime'));
+        shouldBe('is an instance of class DateTime')(
+            shouldBeA(DateTime::class)->toString()
+        );
     }
 
     public function test_evaluate(): void
     {
-        Assert::assertThat(new DateTime(), shouldBeA(DateTime::class));
+        shouldBe(true) (
+            shouldBeA(DateTime::class)->evaluate(new DateTime(), returnResult: true)
+        );
     }
 }

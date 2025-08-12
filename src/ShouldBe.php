@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Should;
 
 use Override;
-use PHPUnit\Framework\Constraint\IsEqual;
+use Should\Constraint\Is;
 
 function shouldBe(mixed $expected, string $message = ''): ShouldBe
 {
@@ -16,7 +16,7 @@ class ShouldBe extends ShouldSatisfy
 {
     public function __construct(mixed $expected, string $message = '')
     {
-        parent::__construct(new IsEqual($expected), $message);
+        parent::__construct(new Is($expected), $message);
     }
 
     #[Override]

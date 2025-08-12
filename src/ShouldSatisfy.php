@@ -17,8 +17,8 @@ function shouldSatisfy(Constraint $constraint, string $message = ''): ShouldSati
 class ShouldSatisfy extends InvokableConstraint
 {
     public function __construct(
-        protected readonly Constraint $inner,
-        protected readonly string $message = '',
+        public readonly Constraint $inner,
+        public readonly string $message = '',
     ) {
     }
 
