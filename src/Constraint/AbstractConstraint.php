@@ -10,23 +10,18 @@ use PHPUnit\Framework\ExpectationFailedException;
 
 abstract class AbstractConstraint extends Constraint
 {
-    abstract protected function doEvaluate(mixed $actual): void;
+    abstract protected function doEvaluate(mixed $actual, Assert $assert): void;
 
     #[Override]
     final public function evaluate(mixed $other, string $description = '', bool $returnResult = false): ?bool
     {
         try {
-            $this->doEvaluate($other);
+            $this->doEvaluate($other, new Assert($description));
         } catch (ExpectationFailedException $ex) {
             if ($returnResult) {
                 return false;
             }
-            throw new ExpectationFailedException(
-                '' === $description
-                ? sprintf("Failed asserting that %s.", $this->failureDescription($other))
-                : $description,
-                $ex->getComparisonFailure(),
-            );
+            throw $ex;
         }
         return $returnResult ?: null;
     }

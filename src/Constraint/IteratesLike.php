@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Should\Constraint;
 
 use Override;
-use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Util\Exporter;
+
+use function Should\shouldBe;
 
 final class IteratesLike extends AbstractConstraint
 {
@@ -26,25 +28,50 @@ final class IteratesLike extends AbstractConstraint
     }
 
     #[Override]
-    protected function doEvaluate(mixed $actual): void
+    protected function doEvaluate(mixed $actual, Assert $assert): void
     {
         if (!is_iterable($actual)) {
-            Assert::fail('Expected an iterable, got ' . get_debug_type($actual));
+            throw $assert->comparisonFailure('Expected an iterable, got ' . get_debug_type($actual), $this->expected, $actual);
         }
 
         $expectedArray = [];
         foreach ($this->expected as $key => $value) {
-            $expectedArray[] = [$key, $value];
+            $expectedArray[] = ['key' => $key, 'value' => $value];
         }
 
         $actualArray = [];
         foreach ($actual as $key => $value) {
-            $actualArray[] = [$key, $value];
+            $actualArray[] = ['key' => $key, 'value' => $value];
         }
-        Assert::assertEquals($expectedArray, $actualArray);
+
+        try {
+            shouldBe(count($expectedArray))(count($actualArray));
+            foreach ($expectedArray as $i => $expectedTuple) {
+                shouldBe($expectedTuple['key'])($actualArray[$i]['key']);
+                shouldBe($expectedTuple['value'])($actualArray[$i]['value']);
+            }
+        } catch (ExpectationFailedException) {
+            throw $assert->comparisonFailure(
+                'Failed asserting that two iterables iterate the same way.',
+                $this->expected,
+                $actual,
+                $this->tupleArrayToString($expectedArray),
+                $this->tupleArrayToString($actualArray),
+            );
+        }
 
         if ($this->repeatedly) {
             iterator_to_array($actual); // iterate once more to see if it is rewindable
         }
+    }
+
+    /**
+     * @param list<array{key:mixed,value:mixed}> $tupleArray
+     */
+    private function tupleArrayToString(array $tupleArray): string
+    {
+        return [] === $tupleArray
+            ? 'Array &0 []'
+            : "Array &0 [\n".implode(array_map(static fn (array $tuple) => '    '.Exporter::export($tuple['key']) . ' => ' . Exporter::export($tuple['value']) . ",\n", $tupleArray)) . ']';
     }
 }
