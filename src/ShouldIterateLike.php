@@ -15,14 +15,6 @@ function shouldIterateLike(iterable $expected, bool $repeatedly = false, string 
     return new ShouldIterateLike($expected, $repeatedly, $message);
 }
 
-/**
- * @param iterable<mixed,mixed> $expected
- */
-function shouldRepeatedlyIterateLike(iterable $expected, string $message = ''): ShouldIterateLike
-{
-    return new ShouldIterateLike($expected, true, $message);
-}
-
 class ShouldIterateLike extends ShouldSatisfy
 {
     /**
