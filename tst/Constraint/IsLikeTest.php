@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Should\Constraint\Is;
 use Should\Constraint\IsLike;
 use Should\Constraint\Util\Util;
+
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldBeUndefined;

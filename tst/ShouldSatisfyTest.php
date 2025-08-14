@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use DateInterval;
-use DateTime;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Constraint\IsNull;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-use Throwable;
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
-use function Should\shouldBeA;
 use function Should\shouldNotThrow;
 use function Should\shouldSatisfy;
 use function Should\shouldThrow;

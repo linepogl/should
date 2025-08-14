@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Should\Constraint\IteratesLike;
 use Should\Constraint\Util\Util;
+
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldIterateLike;
@@ -70,7 +71,10 @@ class IteratesLikeTest extends TestCase
             ->to(shouldIterateLike([1, 2], repeatedly: true))
         );
 
-        $generator = (function () { yield 1; yield 2; })();
+        $generator = (function () {
+            yield 1;
+            yield 2;
+        })();
         shouldThrow(new Exception('Cannot traverse an already closed generator'))(
             fn () =>
             pipe($generator)

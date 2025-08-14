@@ -6,11 +6,9 @@ namespace Tests;
 
 use DateInterval;
 use DateTime;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-use Throwable;
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldBeA;

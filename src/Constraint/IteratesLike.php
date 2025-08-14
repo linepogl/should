@@ -9,6 +9,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Util\Exporter;
 use Should\Constraint\Util\CustomAssert;
 use Should\Constraint\Util\Util;
+
 use function Should\shouldBe;
 
 final class IteratesLike extends AbstractConstraint
