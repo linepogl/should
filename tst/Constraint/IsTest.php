@@ -4,19 +4,32 @@ declare(strict_types=1);
 
 namespace Tests\Constraint;
 
+use DateTime;
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Should\Constraint\Is;
-use Should\Constraint\Util;
-
+use Should\Constraint\Util\Util;
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
+use function Should\shouldNotThrow;
 use function Should\shouldThrow;
+
+class A
+{
+    public function __construct(public readonly string $a)
+    {
+    }
+}
+
+class AA extends A
+{
+}
 
 class IsTest extends TestCase
 {
     /**
-     * @return iterable<string, array{mixed, mixed}|array{mixed, mixed, ?string}>
+     * @return iterable<string, array{mixed, mixed}|array{mixed, mixed, string}|array{mixed, mixed, string, string, string}>
      */
     public static function cases(): iterable
     {
@@ -74,22 +87,28 @@ class IsTest extends TestCase
 
         yield 'object == object (identical objects)' => [$o, $o];
         yield 'object == object (equal objects)' => [$o, (object)['a' => 1]];
-        // todo: yield 'object != object (content)' => [$o, (object)['a'=>'1'], 'Failed asserting that two objects are equal.'];
+        yield 'object != object (content)' => [$o, (object)['a' => '1'], 'Failed asserting that two objects are equal.'];
         yield 'object != object (content2)' => [$o, (object)['a' => '4'], 'Failed asserting that two objects are equal.'];
+
+        yield 'object != object (subclass)' => [new A('1'), new AA('1'), 'Failed asserting that two objects are equal. Expected class "Tests\Constraint\A" but got "Tests\Constraint\AA".'];
+
+        yield 'object == object (special comparators)' => [new DateTime('2025-01-01'), new DateTimeImmutable('2025-01-01')];
+        yield 'object != object (special comparators)' => [new DateTime('2025-01-01'), new DateTimeImmutable('2025-01-02'), 'Failed asserting that two DateTime objects are equal.', '2025-01-01T00:00:00.000000+0000', '2025-01-02T00:00:00.000000+0000'];
     }
 
     #[DataProvider('cases')]
-    public function test_is(mixed $expected, mixed $actual, ?string $error = null): void
+    public function test_is(mixed $expected, mixed $actual, ?string $error = null, ?string $expectedAsString = null, ?string $actualAsString = null): void
     {
         $constraint = new Is($expected);
         if (null === $error) {
+            shouldNotThrow()(fn () => $constraint->evaluate($actual));
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
         } else {
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
-            shouldThrow(Util::comparisonFailure($error, $expected, $actual))(
+            shouldThrow(Util::expectationFailure($error, $expected, $actual, $expectedAsString, $actualAsString))(
                 fn () => $constraint->evaluate($actual)
             );
-            shouldThrow(Util::comparisonFailure('Custom message', $expected, $actual))(
+            shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, $expectedAsString, $actualAsString, $error))(
                 fn () => $constraint->evaluate($actual, 'Custom message')
             );
         }

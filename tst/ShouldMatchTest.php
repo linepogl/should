@@ -4,35 +4,41 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use DateInterval;
-use DateTime;
+use ArrayIterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-use Throwable;
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldBeA;
+use function Should\shouldBeIterable;
+use function Should\shouldBeLike;
+use function Should\shouldBeUndefined;
+use function Should\shouldMatch;
 use function Should\shouldNotThrow;
 use function Should\shouldThrow;
 
-class ShouldBeATest extends TestCase
+class ShouldMatchTest extends TestCase
 {
-    public function test_should_be_a(): void
+    public function test_should_match(): void
     {
-        $actual = new DateTime();
+        $constraint = shouldMatch('/^[0-9]$/');;
+        pipe($constraint->toString())->to(shouldBe('is of type string and matches PCRE pattern "/^[0-9]$/"'));
 
-        $constraint = shouldBeA(DateTime::class);
+        $actual = '1';
         $eval = fn () => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldNotThrow());
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
-        pipe($constraint->toString())->to(shouldBe('is an instance of class DateTime'));
 
-        $constraint = shouldBeA(DateInterval::class);
+        $actual = '11';
         $eval = fn () => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldThrow(ExpectationFailedException::class));
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
-        pipe($constraint->toString())->to(shouldBe('is an instance of class DateInterval'));
+
+        $actual = 1;
+        $eval = fn () => pipe($actual)->to($constraint);
+        pipe($eval)->to(shouldThrow(ExpectationFailedException::class));
+        pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
     }
 }

@@ -7,91 +7,121 @@ namespace Should\Constraint;
 use Override;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Util\Exporter;
+use Should\Constraint\Util\CustomAssert;
+use Should\Constraint\Util\IsLikeErrorDetails;
+use Should\Constraint\Util\Util;
 use Should\ShouldBeUndefined;
 
 final class IsLike extends AbstractConstraint
 {
     public function __construct(
-        private readonly mixed $pattern,
-        private readonly string $path = '',
+        private readonly mixed $expected,
     ) {
     }
 
     #[Override]
     public function toString(): string
     {
-        return 'is like ' . Exporter::export($this->pattern);
-    }
-
-    private function prependMessage(string $message): string
-    {
-        return ('' === $this->path ? '' : "$this->path:\n") . $message;
+        return $this->expected instanceof Constraint ? $this->expected->toString() : 'is like ' . Util::anyToString($this->expected);
     }
 
     #[Override]
-    protected function doEvaluate(mixed $actual, Assert $assert): void
+    protected function doEvaluate(mixed $actual, CustomAssert $assert, ?IsLikeErrorDetails $errorDetails = null): void
     {
-        if ($this->pattern instanceof Constraint) {
-            $assert->assertThat($actual, $this->pattern, $this->prependMessage(...));
-        } elseif (is_array($this->pattern)) {
-            if (array_is_list($this->pattern)) {
-                $this->doEvaluateIsLikeList($this->pattern, $actual, $assert);
+        $errorDetails ??= new IsLikeErrorDetails($this->expected, $actual);
+        if ($this->expected instanceof Constraint) {
+            $assert->assertThat($actual, $this->expected, $errorDetails->prependMessage(), $errorDetails->comparisonFailure());
+        } elseif (is_array($this->expected)) {
+            if (array_is_list($this->expected)) {
+                $this->doEvaluateIsLikeList($this->expected, $actual, $assert, $errorDetails);
             } else {
-                $this->doEvaluateIsLikeArray($this->pattern, $actual, $assert);
+                $this->doEvaluateIsLikeArray($this->expected, $actual, $assert, $errorDetails);
             }
         } else {
-            $assert->assertIs($actual, $this->pattern, $this->prependMessage(...));
+            $assert->assertIs($this->expected, $actual, $errorDetails->prependMessage(), $errorDetails->comparisonFailure());
         }
     }
 
     /**
-     * @param list<mixed> $pattern
+     * @param list<mixed> $expected
      */
-    private function doEvaluateIsLikeList(array $pattern, mixed $actual, Assert $assert): void
+    private function doEvaluateIsLikeList(array $expected, mixed $actual, CustomAssert $assert, IsLikeErrorDetails $errorDetails): void
     {
-        $assert->assertIsIterable($actual, $this->prependMessage(...));
+        $assert->assertIsIterable($actual, $errorDetails->prependMessage(), $errorDetails->comparisonFailure());
         $actualArray = [];
         foreach ($actual as $key => $value) {
-            $assert->assertArrayNotHasKey($key, $actualArray, $this->message('Expected unique keys, but ' . Exporter::export($key) . ' was duplicated'));
+            $assert->assertArrayNotHasKey(
+                $key,
+                $actualArray,
+                $errorDetails->prependMessage('Expected unique keys, but ' . Exporter::export($key) . ' was duplicated'),
+                $errorDetails->comparisonFailure(),
+            );
             $actualArray[$key] = $value;
         }
         $realCount = 0;
         /** @var int<0,max> $index */
-        foreach ($pattern as $index => $value) {
+        foreach ($expected as $index => $value) {
             if ($value instanceof ShouldBeUndefined) {
-                $assert->assertArrayNotHasKey($index, $actualArray, $this->message('Expected that the key ' . Exporter::export($index) . ' should not be present, but it was.'));
+                $assert->assertArrayNotHasKey(
+                    $index,
+                    $actualArray,
+                    $errorDetails->prependMessage(),
+                    $errorDetails->comparisonFailure(),
+                );
             } else {
                 $realCount++;
-                $assert->assertArrayHasKey($index, $actualArray, $this->message('Expected that the key ' . Exporter::export($index) . ' should be present, but it was not.'));
-                $assert->assertThat($actualArray[$index], new IsLike($value, path: $this->path . ' → ' . $index));
+                $assert->assertArrayHasKey(
+                    $index,
+                    $actualArray,
+                    $errorDetails->prependMessage(),
+                    $errorDetails->comparisonFailure(),
+                );
+
+                new IsLike($value)->doEvaluate($actualArray[$index], $assert, $errorDetails->sub($index));
             }
         }
-        $assert->assertCount($realCount, $actualArray, $this->message('Expected ' . $realCount . ' elements, but got ' . count($actualArray)));
+        $assert->assertCount(
+            $realCount,
+            $actualArray,
+            $errorDetails->prependMessage(),
+            $errorDetails->comparisonFailure(),
+        );
     }
 
     /**
-     * @param array<mixed> $pattern
+     * @param array<mixed> $expected
      */
-    private function doEvaluateIsLikeArray(array $pattern, mixed $actual, Assert $assert): void
+    private function doEvaluateIsLikeArray(array $expected, mixed $actual, CustomAssert $assert, IsLikeErrorDetails $errorDetails): void
     {
-        $assert->assertIsIterable($actual, $this->path);
+        $assert->assertIsIterable($actual, $errorDetails->prependMessage(), $errorDetails->comparisonFailure());
         $actualArray = [];
         foreach ($actual as $key => $value) {
-            $assert->assertArrayNotHasKey($key, $actualArray, $this->path);
+            $assert->assertArrayNotHasKey(
+                $key,
+                $actualArray,
+                $errorDetails->prependMessage('Expected unique keys, but ' . Exporter::export($key) . ' was duplicated'),
+                $errorDetails->comparisonFailure(),
+            );
             $actualArray[$key] = $value;
         }
-        foreach ($pattern as $key => $value) {
+        foreach ($expected as $key => $value) {
             if ($value instanceof ShouldBeUndefined) {
-                $assert->assertArrayNotHasKey($key, $actualArray, $this->path);
+                $assert->assertArrayNotHasKey(
+                    $key,
+                    $actualArray,
+                    $errorDetails->prependMessage(),
+                    $errorDetails->comparisonFailure(),
+                );
             } else {
-                $assert->assertArrayHasKey($key, $actualArray, $this->path);
-                $assert->assertThat($actualArray[$key], new IsLike($value, path: $this->path . ' → ' . $key));
+                $assert->assertArrayHasKey(
+                    $key,
+                    $actualArray,
+                    $errorDetails->prependMessage(),
+                    $errorDetails->comparisonFailure(),
+                );
+
+                new IsLike($value)->doEvaluate($actualArray[$key], $assert, $errorDetails->sub($key));
             }
         }
-    }
-
-    private function message(string $message): string
-    {
-        return $this->path . ":\n" . $message;
     }
 }

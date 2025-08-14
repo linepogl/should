@@ -6,7 +6,7 @@ namespace Should;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Util\Exporter;
-use Should\Constraint\Assert;
+use Should\Constraint\Util\CustomAssert;
 use Throwable;
 
 /**
@@ -39,7 +39,7 @@ class ShouldNotThrow
     public function __invoke(mixed $actual): void
     {
         $class = is_string($this->expected) ? $this->expected : $this->expected::class;
-        $assert = new Assert($this->message);
+        $assert = new CustomAssert($this->message);
 
         try {
             $ex = shouldThrow($this->expected)($actual);

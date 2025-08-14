@@ -5,94 +5,35 @@ declare(strict_types=1);
 namespace Tests;
 
 use ArrayIterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
+use function Should\shouldBe;
+use function Should\shouldBeA;
 use function Should\shouldBeLike;
 use function Should\shouldBeUndefined;
 use function Should\shouldMatch;
+use function Should\shouldNotThrow;
 use function Should\shouldThrow;
 
 class ShouldBeLikeTest extends TestCase
 {
-    public function test_should_be_like_basic(): void
+    public function test_should_be_like(): void
     {
-        1 |> shouldBeLike(1);
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => 2 |> shouldBeLike(1
-        );
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => '1' |> shouldBeLike(1
-        );
+        $actual = 1;
 
-        'test' |> shouldBeLike('test');
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => 'test2' |> shouldBeLike('test'
-        );
-    }
+        $constraint = shouldBeLike(1);
+        $eval = fn () => $actual |> $constraint;
+        $eval |> shouldNotThrow();
+        $constraint->evaluate($actual, '', true) |> shouldBe(true);
+        $constraint->toString() |> shouldBe('is like 1');
 
-    public function test_should_be_like_constraint(): void
-    {
-        'test' |> shouldBeLike(shouldMatch('/^t.+t$/'));
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => 'post' |> shouldBeLike(shouldMatch('/^t.+t$/')
-        );
-    }
+        $constraint = shouldBeLike(2);
+        $eval = fn () => $actual |> $constraint;
+        $eval |> shouldThrow(ExpectationFailedException::class);
+        $constraint->evaluate($actual, '', true) |> shouldBe(false);
+        $constraint->toString() |> shouldBe('is like 2');
 
-    public function test_should_be_like_array_list(): void
-    {
-        [] |> shouldBeLike([]);
-        [] |> shouldBeLike([shouldBeUndefined()]);
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => [1] |> shouldBeLike([]
-        );
-
-        [1, 2, 3] |> shouldBeLike([1, 2, 3]);
-        [1, 2, 3] |> shouldBeLike([1, 2, 3, shouldBeUndefined()]);
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => [1, 2, 3] |> shouldBeLike([1, 2]
-        );
-
-        new ArrayIterator([1, 2, 3]) |> shouldBeLike([1, 2, 3]);
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => new ArrayIterator([1, 2, 3]) |> shouldBeLike([1, 2]
-        );
-    }
-
-    public function test_should_be_like_associative_array(): void
-    {
-        ['a' => 1] |> shouldBeLike(['a' => 1]);
-        ['a' => 1, 'b' => 2] |> shouldBeLike(['a' => 1]);
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => [] |> shouldBeLike(['a' => 1]
-        );
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => ['a' => 0] |> shouldBeLike(['a' => 1]
-        );
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => ['a' => '1'] |> shouldBeLike(['a' => 1]
-        );
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => ['A' => 1] |> shouldBeLike(['a' => 1]
-        );
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => ['a' => 0, 'b' => 2] |> shouldBeLike(['a' => 1]
-        );
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => ['b' => 2] |> shouldBeLike(['a' => 1]
-        );
-
-        new ArrayIterator([1, 2, 3]) |> shouldBeLike([1, 2, 3]);
-        shouldThrow(ExpectationFailedException::class)(
-            fn () => new ArrayIterator([1, 2, 3]) |> shouldBeLike([1, 2]
-        );
-    }
-
-    public function test_should_be_like_nested_array(): void
-    {
-        [['a' => ['b' => 2]]] |> shouldBeLike([['a' => ['b' => 2]]]);
-
-        shouldBeLike(['a' => shouldBeUndefined()])([]);
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBeLike(['a' => shouldBeUndefined()])(['a' => null]));
     }
 }

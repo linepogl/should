@@ -6,7 +6,7 @@ namespace Should;
 
 use PHPUnit\Util\Exporter;
 use ReflectionClass;
-use Should\Constraint\Assert;
+use Should\Constraint\Util\CustomAssert;
 use Throwable;
 
 /**
@@ -60,7 +60,7 @@ class ShouldThrow
     public function __invoke(mixed $actual): Throwable
     {
         $class = is_string($this->expected) ? $this->expected : $this->expected::class;
-        $assert = new Assert($this->message);
+        $assert = new CustomAssert($this->message);
         try {
             $actual();
         } catch (Throwable $ex) {

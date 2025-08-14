@@ -7,7 +7,8 @@ namespace Should\Constraint;
 use Override;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Util\Exporter;
-
+use Should\Constraint\Util\CustomAssert;
+use Should\Constraint\Util\Util;
 use function Should\shouldBe;
 
 final class IteratesLike extends AbstractConstraint
@@ -24,15 +25,13 @@ final class IteratesLike extends AbstractConstraint
     #[Override]
     public function toString(): string
     {
-        return ($this->repeatedly ? 'repeatedly ' : '') . 'iterates like ' . Exporter::export($this->expected);
+        return ($this->repeatedly ? 'repeatedly ' : '') . 'iterates like ' . Util::anyToString($this->expected);
     }
 
     #[Override]
-    protected function doEvaluate(mixed $actual, Assert $assert): void
+    protected function doEvaluate(mixed $actual, CustomAssert $assert): void
     {
-        if (!is_iterable($actual)) {
-            throw $assert->comparisonFailure('Expected an iterable, got ' . get_debug_type($actual), $this->expected, $actual);
-        }
+        $assert->assertIsIterable($actual, '', Util::comparisonFailure($this->expected, $actual));
 
         $expectedArray = [];
         foreach ($this->expected as $key => $value) {
@@ -51,7 +50,7 @@ final class IteratesLike extends AbstractConstraint
                 shouldBe($expectedTuple['value'])($actualArray[$i]['value']);
             }
         } catch (ExpectationFailedException) {
-            throw $assert->comparisonFailure(
+            throw $assert->expectationFailure(
                 'Failed asserting that two iterables iterate the same way.',
                 $this->expected,
                 $actual,

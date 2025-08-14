@@ -9,8 +9,7 @@ use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Should\Constraint\IteratesLike;
-use Should\Constraint\Util;
-
+use Should\Constraint\Util\Util;
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldIterateLike;
@@ -32,13 +31,15 @@ class IteratesLikeTest extends TestCase
         yield 'array 5' => [['a' => 1, 'b' => 2], ['a' => 1, 'b' => '2'], 'Failed asserting that two iterables iterate the same way.'];
         yield 'array 6' => [['a' => 1, 'b' => 2], ['a' => 1, 'b' => 2, 'c' => 3], 'Failed asserting that two iterables iterate the same way.'];
         yield 'array 7' => [['a' => 1, 'b' => 2], ['a' => 1], 'Failed asserting that two iterables iterate the same way.'];
+
+        yield 'not iterable' => [['a' => 1, 'b' => 2], 1, 'Failed asserting that 1 is of type iterable.'];
     }
 
     /**
      * @param iterable<mixed, mixed> $expected
      */
     #[DataProvider('cases')]
-    public function test_iterates_like(iterable $expected, mixed $actual, ?string $error = null): void
+    public function test_iterates_like(iterable $expected, mixed $actual, ?string $error = null, ?string $expectedAsString = null, ?string $actualAsString = null): void
     {
         $constraint = new IteratesLike($expected);
         if (null === $error) {
@@ -46,10 +47,10 @@ class IteratesLikeTest extends TestCase
             shouldNotThrow()(fn () => $constraint->evaluate($actual));
         } else {
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
-            shouldThrow(Util::comparisonFailure($error, $expected, $actual))(
+            shouldThrow(Util::expectationFailure($error, $expected, $actual, $expectedAsString, $actualAsString))(
                 fn () => $constraint->evaluate($actual)
             );
-            shouldThrow(Util::comparisonFailure('Custom message', $expected, $actual))(
+            shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, $expectedAsString, $actualAsString, $error))(
                 fn () => $constraint->evaluate($actual, 'Custom message')
             );
         }
@@ -69,13 +70,17 @@ class IteratesLikeTest extends TestCase
             ->to(shouldIterateLike([1, 2], repeatedly: true))
         );
 
+        $generator = (function () { yield 1; yield 2; })();
         shouldThrow(new Exception('Cannot traverse an already closed generator'))(
             fn () =>
-            pipe((function () {
-                yield 1;
-                yield 2;
-            })())
+            pipe($generator)
             ->to(shouldIterateLike([1, 2], repeatedly: true))
         );
+    }
+
+    public function test_to_string(): void
+    {
+        pipe(new IteratesLike([1, 2])->toString())->to(shouldBe('iterates like an array'));
+        pipe(new IteratesLike([1, 2], repeatedly: true)->toString())->to(shouldBe('repeatedly iterates like an array'));
     }
 }

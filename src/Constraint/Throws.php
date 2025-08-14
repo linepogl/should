@@ -6,6 +6,7 @@ namespace Should\Constraint;
 
 use Override;
 use PHPUnit\Util\Exporter;
+use Should\Constraint\Util\CustomAssert;
 use Throwable;
 
 /**
@@ -31,7 +32,7 @@ final class Throws extends AbstractConstraint
     }
 
     #[Override]
-    protected function doEvaluate(mixed $actual, Assert $assert): void
+    protected function doEvaluate(mixed $actual, CustomAssert $assert): void
     {
         if (!is_callable($actual)) {
             $assert->fail('Expected a callable, got ' . get_debug_type($actual));

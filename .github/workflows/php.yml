@@ -36,3 +36,6 @@ jobs:
 
       - name: Unit tests
         run: composer run-script phpunit
+
+      - name: Unit tests PHP 8.5
+        run: composer run-script phpunit:php85

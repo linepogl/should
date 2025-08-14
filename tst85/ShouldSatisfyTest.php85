@@ -7,6 +7,7 @@ namespace Tests;
 use DateInterval;
 use DateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Constraint\IsNull;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
@@ -14,24 +15,24 @@ use Throwable;
 use function Should\shouldBe;
 use function Should\shouldBeA;
 use function Should\shouldNotThrow;
+use function Should\shouldSatisfy;
 use function Should\shouldThrow;
 
-class ShouldBeATest extends TestCase
+class ShouldSatisfyTest extends TestCase
 {
-    public function test_should_be_a(): void
+    public function test_should_satisfy(): void
     {
-        $actual = new DateTime();
+        $constraint = shouldSatisfy(new IsNull());
+        $constraint->toString() |> shouldBe('is null');
 
-        $constraint = shouldBeA(DateTime::class);
+        $actual = null;
         $eval = fn () => $actual |> $constraint;
         $eval |> shouldNotThrow();
         $constraint->evaluate($actual, '', true) |> shouldBe(true);
-        $constraint->toString() |> shouldBe('is an instance of class DateTime');
 
-        $constraint = shouldBeA(DateInterval::class);
+        $actual = 1;
         $eval = fn () => $actual |> $constraint;
         $eval |> shouldThrow(ExpectationFailedException::class);
         $constraint->evaluate($actual, '', true) |> shouldBe(false);
-        $constraint->toString() |> shouldBe('is an instance of class DateInterval');
     }
 }
