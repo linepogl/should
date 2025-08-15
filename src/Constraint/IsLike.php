@@ -61,7 +61,7 @@ final class IsLike extends AbstractConstraint
         $realCount = 0;
         /** @var int<0,max> $index */
         foreach ($expected as $index => $value) {
-            if ($value instanceof ShouldBeUndefined) {
+            if ($value instanceof IsUndefined || $value instanceof ShouldBeUndefined) {
                 $assert->assertArrayNotHasKey(
                     $index,
                     $actualArray,
@@ -105,7 +105,7 @@ final class IsLike extends AbstractConstraint
             $actualArray[$key] = $value;
         }
         foreach ($expected as $key => $value) {
-            if ($value instanceof ShouldBeUndefined) {
+            if ($value instanceof IsUndefined || $value instanceof ShouldBeUndefined) {
                 $assert->assertArrayNotHasKey(
                     $key,
                     $actualArray,

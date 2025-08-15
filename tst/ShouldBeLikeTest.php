@@ -20,13 +20,13 @@ class ShouldBeLikeTest extends TestCase
         $actual = 1;
 
         $constraint = shouldBeLike(1);
-        $eval = fn () => pipe($actual)->to($constraint);
+        $eval = static fn() => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldNotThrow());
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
         pipe($constraint->toString())->to(shouldBe('is like 1'));
 
         $constraint = shouldBeLike(2);
-        $eval = fn () => pipe($actual)->to($constraint);
+        $eval = static fn() => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldThrow(ExpectationFailedException::class));
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
         pipe($constraint->toString())->to(shouldBe('is like 2'));

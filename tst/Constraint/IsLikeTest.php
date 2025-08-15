@@ -55,14 +55,14 @@ class IsLikeTest extends TestCase
     {
         $constraint = new IsLike($expected);
         if (null === $error) {
-            shouldNotThrow()(fn () => $constraint->evaluate($actual));
+            shouldNotThrow()(static fn() => $constraint->evaluate($actual));
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
         } else {
             shouldThrow(Util::expectationFailure($error, $expected, $actual, null, null, $comparisonError))(
-                fn () => $constraint->evaluate($actual)
+                static fn() => $constraint->evaluate($actual)
             );
             shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, null, null, $comparisonError ?? $error))(
-                fn () => $constraint->evaluate($actual, 'Custom message')
+                static fn() => $constraint->evaluate($actual, 'Custom message')
             );
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
         }

@@ -8,8 +8,14 @@ return $config
     ->setRiskyAllowed(true)
     ->setFinder(new PhpCsFixer\Finder()->in([__DIR__]))
     ->setRules([
+        '@PHP80Migration' => true,
         '@PSR12' => true,
+        '@PER-CS' => true,
         'array_indentation' => true,
+        'trim_array_spaces' => true,
+        'binary_operator_spaces' => ['default' => 'single_space'],
+        'concat_space' => ['spacing' => 'one'],
+        'single_line_empty_body' => false,
         'global_namespace_import' => true,
         'group_import' => false,
         'heredoc_indentation' => false,
@@ -27,11 +33,12 @@ return $config
         'modernize_strpos' => true,
         'native_function_invocation' => ['include' => [], 'strict'  => true],
         'non_printable_character' => true,
-        'php_unit_test_case_static_method_calls' => ['call_type' => 'this'],
-        'static_lambda' => false,
+        'php_unit_test_case_static_method_calls' => ['call_type' => 'static'],
+        'static_lambda' => true,
         'declare_strict_types' => true,
         'no_useless_else' => true,
         'no_useless_return' => true,
+        'yoda_style' => true,
         'new_expression_parentheses' => ['use_parentheses' => false],
         'no_extra_blank_lines' => ['tokens' => ['extra','use','switch','case','default','curly_brace_block','parenthesis_brace_block','square_brace_block']],
-]);
+    ]);

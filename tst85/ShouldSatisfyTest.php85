@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use DateInterval;
-use DateTime;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Constraint\IsNull;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
-use Throwable;
 use function Should\shouldBe;
-use function Should\shouldBeA;
 use function Should\shouldNotThrow;
 use function Should\shouldSatisfy;
 use function Should\shouldThrow;
@@ -26,12 +21,12 @@ class ShouldSatisfyTest extends TestCase
         $constraint->toString() |> shouldBe('is null');
 
         $actual = null;
-        $eval = fn () => $actual |> $constraint;
+        $eval = static fn() => $actual |> $constraint;
         $eval |> shouldNotThrow();
         $constraint->evaluate($actual, '', true) |> shouldBe(true);
 
         $actual = 1;
-        $eval = fn () => $actual |> $constraint;
+        $eval = static fn() => $actual |> $constraint;
         $eval |> shouldThrow(ExpectationFailedException::class);
         $constraint->evaluate($actual, '', true) |> shouldBe(false);
     }

@@ -19,14 +19,14 @@ final class IteratesLike extends AbstractConstraint
      */
     public function __construct(
         private readonly iterable $expected,
-        private readonly bool $repeatedly = false,
+        private readonly bool $rewind = false,
     ) {
     }
 
     #[Override]
     public function toString(): string
     {
-        return ($this->repeatedly ? 'repeatedly ' : '') . 'iterates like ' . Util::anyToString($this->expected);
+        return 'iterates like ' . Util::anyToString($this->expected) . ($this->rewind ? ' and rewinds' : '');
     }
 
     #[Override]
@@ -60,7 +60,7 @@ final class IteratesLike extends AbstractConstraint
             );
         }
 
-        if ($this->repeatedly) {
+        if ($this->rewind) {
             iterator_to_array($actual); // iterate once more to see if it is rewindable
         }
     }
@@ -72,6 +72,6 @@ final class IteratesLike extends AbstractConstraint
     {
         return [] === $tupleArray
             ? 'Array &0 []'
-            : "Array &0 [\n".implode(array_map(static fn (array $tuple) => '    '.Exporter::export($tuple['key']) . ' => ' . Exporter::export($tuple['value']) . ",\n", $tupleArray)) . ']';
+            : "Array &0 [\n" . implode(array_map(static fn(array $tuple) => '    ' . Exporter::export($tuple['key']) . ' => ' . Exporter::export($tuple['value']) . ",\n", $tupleArray)) . ']';
     }
 }

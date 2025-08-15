@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Should;
 
-use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Util\Exporter;
-use Should\Constraint\Util\CustomAssert;
+use Override;
+use PHPUnit\Framework\Constraint\LogicalNot;
+use Should\Constraint\Throws;
 use Throwable;
 
 /**
@@ -22,31 +22,25 @@ function shouldNotThrow(string|Throwable $expected = Throwable::class, string $m
 /**
  * @template E of Throwable
  */
-class ShouldNotThrow
+class ShouldNotThrow extends ShouldSatisfy
 {
     /**
      * @param class-string<E>|E $expected
      */
     public function __construct(
-        private readonly string|Throwable $expected = Throwable::class,
-        private readonly string $message = '',
+        string|Throwable $expected = Throwable::class,
+        string $message = '',
     ) {
+        parent::__construct(new LogicalNot(new Throws($expected)), $message);
     }
 
     /**
      * @param callable():mixed $actual
+     * @return callable():mixed
      */
-    public function __invoke(mixed $actual): void
+    #[Override]
+    public function __invoke(mixed $actual): callable
     {
-        $class = is_string($this->expected) ? $this->expected : $this->expected::class;
-        $assert = new CustomAssert($this->message);
-
-        try {
-            $ex = shouldThrow($this->expected)($actual);
-        } catch (ExpectationFailedException) {
-            $assert->success();
-            return;
-        }
-        $assert->fail("Unexpected " . $ex::class . " was thrown: " . Exporter::export($ex));
+        return parent::__invoke($actual);
     }
 }

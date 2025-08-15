@@ -22,13 +22,13 @@ class ShouldBeATest extends TestCase
         $actual = new DateTime();
 
         $constraint = shouldBeA(DateTime::class);
-        $eval = fn () => pipe($actual)->to($constraint);
+        $eval = static fn() => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldNotThrow());
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
         pipe($constraint->toString())->to(shouldBe('is an instance of class DateTime'));
 
         $constraint = shouldBeA(DateInterval::class);
-        $eval = fn () => pipe($actual)->to($constraint);
+        $eval = static fn() => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldThrow(ExpectationFailedException::class));
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
         pipe($constraint->toString())->to(shouldBe('is an instance of class DateInterval'));

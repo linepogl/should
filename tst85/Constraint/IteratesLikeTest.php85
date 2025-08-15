@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Should\Constraint\IteratesLike;
 use Should\Constraint\Util\Util;
+
 use function Should\shouldBe;
 use function Should\shouldIterateLike;
 use function Should\shouldNotThrow;
@@ -43,43 +44,46 @@ class IteratesLikeTest extends TestCase
         $constraint = new IteratesLike($expected);
         if (null === $error) {
             $constraint->evaluate($actual, '', true) |> shouldBe(true);
-            shouldNotThrow()(fn () => $constraint->evaluate($actual));
+            shouldNotThrow()(static fn() => $constraint->evaluate($actual));
         } else {
             $constraint->evaluate($actual, '', true) |> shouldBe(false);
             shouldThrow(Util::expectationFailure($error, $expected, $actual, $expectedAsString, $actualAsString))(
-                fn () => $constraint->evaluate($actual)
+                static fn() => $constraint->evaluate($actual)
             );
             shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, $expectedAsString, $actualAsString, $error))(
-                fn () => $constraint->evaluate($actual, 'Custom message')
+                static fn() => $constraint->evaluate($actual, 'Custom message')
             );
         }
     }
 
-    public function test_iterates_like_repeatedly(): void
+    public function test_iterates_like_rewind(): void
     {
         shouldNotThrow()(
-            fn () =>
-            [1, 2]
-            |> shouldIterateLike([1, 2], repeatedly: true)
+            static fn()
+            => [1, 2]
+            |> shouldIterateLike([1, 2], rewind: true)
         );
 
         shouldNotThrow()(
-            fn () =>
-            new ArrayIterator([1, 2])
-            |> shouldIterateLike([1, 2], repeatedly: true)
+            static fn()
+            => new ArrayIterator([1, 2])
+            |> shouldIterateLike([1, 2], rewind: true)
         );
 
-        $generator = (function () { yield 1; yield 2; })();
+        $generator = (static function () {
+            yield 1;
+            yield 2;
+        })();
         shouldThrow(new Exception('Cannot traverse an already closed generator'))(
-            fn () =>
-            $generator
-            |> shouldIterateLike([1, 2], repeatedly: true)
+            static fn()
+            => $generator
+            |> shouldIterateLike([1, 2], rewind: true)
         );
     }
 
     public function test_to_string(): void
     {
         new IteratesLike([1, 2])->toString() |> shouldBe('iterates like an array');
-        new IteratesLike([1, 2], repeatedly: true)->toString() |> shouldBe('repeatedly iterates like an array');
+        new IteratesLike([1, 2], rewind: true)->toString() |> shouldBe('iterates like an array and rewinds');
     }
 }

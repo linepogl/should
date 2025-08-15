@@ -45,46 +45,46 @@ class IteratesLikeTest extends TestCase
         $constraint = new IteratesLike($expected);
         if (null === $error) {
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
-            shouldNotThrow()(fn () => $constraint->evaluate($actual));
+            shouldNotThrow()(static fn() => $constraint->evaluate($actual));
         } else {
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
             shouldThrow(Util::expectationFailure($error, $expected, $actual, $expectedAsString, $actualAsString))(
-                fn () => $constraint->evaluate($actual)
+                static fn() => $constraint->evaluate($actual)
             );
             shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, $expectedAsString, $actualAsString, $error))(
-                fn () => $constraint->evaluate($actual, 'Custom message')
+                static fn() => $constraint->evaluate($actual, 'Custom message')
             );
         }
     }
 
-    public function test_iterates_like_repeatedly(): void
+    public function test_iterates_like_rewind(): void
     {
         shouldNotThrow()(
-            fn () =>
-            pipe([1, 2])
-            ->to(shouldIterateLike([1, 2], repeatedly: true))
+            static fn()
+            => pipe([1, 2])
+            ->to(shouldIterateLike([1, 2], rewind: true))
         );
 
         shouldNotThrow()(
-            fn () =>
-            pipe(new ArrayIterator([1, 2]))
-            ->to(shouldIterateLike([1, 2], repeatedly: true))
+            static fn()
+            => pipe(new ArrayIterator([1, 2]))
+            ->to(shouldIterateLike([1, 2], rewind: true))
         );
 
-        $generator = (function () {
+        $generator = (static function () {
             yield 1;
             yield 2;
         })();
         shouldThrow(new Exception('Cannot traverse an already closed generator'))(
-            fn () =>
-            pipe($generator)
-            ->to(shouldIterateLike([1, 2], repeatedly: true))
+            static fn()
+            => pipe($generator)
+            ->to(shouldIterateLike([1, 2], rewind: true))
         );
     }
 
     public function test_to_string(): void
     {
         pipe(new IteratesLike([1, 2])->toString())->to(shouldBe('iterates like an array'));
-        pipe(new IteratesLike([1, 2], repeatedly: true)->toString())->to(shouldBe('repeatedly iterates like an array'));
+        pipe(new IteratesLike([1, 2], rewind: true)->toString())->to(shouldBe('iterates like an array and rewinds'));
     }
 }

@@ -34,6 +34,11 @@ class ShouldSatisfy extends InvokableConstraint
         return $this->inner->toString();
     }
 
+    /**
+     * @template A
+     * @param A $actual
+     * @return A
+     */
     #[Override]
     public function __invoke(mixed $actual): mixed
     {

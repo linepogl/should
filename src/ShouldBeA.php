@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Should;
 
 use Override;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\IsInstanceOf;
 
 /**
@@ -40,7 +39,6 @@ class ShouldBeA extends ShouldSatisfy
     #[Override]
     public function __invoke(mixed $actual): mixed
     {
-        Assert::assertThat($actual, $this->inner, $this->message);
-        return $actual; // @phpstan-ignore return.type (narrowing type from mixed to E)
+        return parent::__invoke($actual); // @phpstan-ignore return.type (narrowing type from mixed to E)
     }
 }

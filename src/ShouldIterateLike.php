@@ -10,9 +10,9 @@ use Should\Constraint\IteratesLike;
 /**
  * @param iterable<mixed,mixed> $expected
  */
-function shouldIterateLike(iterable $expected, bool $repeatedly = false, string $message = ''): ShouldIterateLike
+function shouldIterateLike(iterable $expected, bool $rewind = false, string $message = ''): ShouldIterateLike
 {
-    return new ShouldIterateLike($expected, $repeatedly, $message);
+    return new ShouldIterateLike($expected, $rewind, $message);
 }
 
 class ShouldIterateLike extends ShouldSatisfy
@@ -22,21 +22,21 @@ class ShouldIterateLike extends ShouldSatisfy
      */
     public function __construct(
         iterable $expected,
-        bool $repeatedly = false,
+        bool $rewind = false,
         string $message = '',
     ) {
-        parent::__construct(new IteratesLike($expected, $repeatedly), $message);
+        parent::__construct(new IteratesLike($expected, $rewind), $message);
     }
 
     /**
-     * @template K
-     * @template V
-     * @param iterable<K,V> $actual
-     * @return iterable<K,V>
+     * @template A
+     * @param A $actual
+     * @return iterable<mixed, mixed>
+     * @phpstan-assert iterable<mixed, mixed> $actual
      */
     #[Override]
     public function __invoke(mixed $actual): mixed
     {
-        return parent::__invoke($actual);
+        return parent::__invoke($actual); // @phpstan-ignore return.type (narrowing type from A to iterable<mixed, mixed>)
     }
 }

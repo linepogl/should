@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Should\Constraint;
 
 use Override;
+use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Util\Exporter;
 use SebastianBergmann\Comparator\ArrayComparator;
 use SebastianBergmann\Comparator\Factory as ComparatorFactory;
@@ -25,10 +26,11 @@ final class Is extends AbstractConstraint
     #[Override]
     public function toString(): string
     {
-        return match(true) {
+        return match (true) {
             null === $this->expected,
             is_scalar($this->expected) => 'is ' . Exporter::export($this->expected),
             is_array($this->expected) => 'is equal to an array',
+            $this->expected instanceof Constraint => $this->expected->toString(),
             default => 'is equal to some ' . get_debug_type($this->expected),
         };
     }
@@ -45,7 +47,7 @@ final class Is extends AbstractConstraint
         $comparator = ComparatorFactory::getInstance()->getComparatorFor($this->expected, $actual);
 
         // ObjectComparator uses the permissive `==` comparison
-        if ($comparator::class === ObjectComparator::class && is_object($this->expected) && is_object($actual)) {
+        if (ObjectComparator::class === $comparator::class && is_object($this->expected) && is_object($actual)) {
             if ($this->expected::class !== $actual::class) {
                 $assert->fail(
                     'Failed asserting that two objects are equal. Expected class "' . $this->expected::class . '" but got "' . $actual::class . '".',
@@ -64,7 +66,7 @@ final class Is extends AbstractConstraint
         }
 
         // ArrayComparator uses the permissive `==` comparison
-        elseif ($comparator::class === ArrayComparator::class && is_array($this->expected) && is_array($actual)) {
+        elseif (ArrayComparator::class === $comparator::class && is_array($this->expected) && is_array($actual)) {
             $assert->assertIteratesLike(
                 $this->expected,
                 $actual,
@@ -75,7 +77,7 @@ final class Is extends AbstractConstraint
 
         // ScalarComparator and NumericComparator do strange things, so let's use the strict `IsIdentical`.
         // TypeComparator works fine, but its message could be improved. Let's `IsIdentical` as well.
-        elseif ($comparator::class === ScalarComparator::class || $comparator::class === NumericComparator::class || $comparator::class === TypeComparator::class) {
+        elseif (ScalarComparator::class === $comparator::class || NumericComparator::class === $comparator::class || TypeComparator::class === $comparator::class) {
             $assert->assertSame(
                 $this->expected,
                 $actual,

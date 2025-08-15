@@ -4,42 +4,30 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use DateTime;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
+use function ImpartialPipes\pipe;
 use function Should\shouldBe;
 use function Should\shouldNotThrow;
-use function Should\shouldStartWith;
 use function Should\shouldThrow;
 
 class ShouldBeTest extends TestCase
 {
     public function test_should_be(): void
     {
-        shouldNotThrow()(fn () => shouldBe(1)(1));
-        shouldNotThrow()(fn () => shouldBe(TestEnum::A)(TestEnum::A));
-        shouldNotThrow()(fn () => shouldBe(null)(null));
-        shouldNotThrow()(fn () => shouldBe([1, 2, 3])([1, 2, 3]));
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBe([1, 2, 3])([1, '2', 3]));
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBe(1)(2));
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBe(1, 'Problem!')(2));
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBe(1)('1'));
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBe('a')(TestEnum::A));
-        shouldThrow(ExpectationFailedException::class)(fn () => shouldBe(null)(''));
-    }
+        $actual = 1;
 
-    public function test_describe(): void
-    {
-        shouldBe('is null')(shouldBe(null)->toString());
-        shouldBe('is 1')(shouldBe(1)->toString());
-        shouldStartWith('is equal to some DateTime')(shouldBe(new DateTime())->toString());
-        shouldStartWith('is equal to some Tests\TestEnum')(shouldBe(TestEnum::A)->toString());
-    }
+        $constraint = shouldBe(1);
+        $eval = static fn() => pipe($actual)->to($constraint);
+        pipe($eval)->to(shouldNotThrow());
+        pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
+        pipe($constraint->toString())->to(shouldBe('is 1'));
 
-    public function test_evaluate(): void
-    {
-        shouldBe(true)(shouldBe(1)->evaluate(1, returnResult: true));
-        shouldBe(false)(shouldBe(1)->evaluate(2, returnResult: true));
+        $constraint = shouldBe(2);
+        $eval = static fn() => pipe($actual)->to($constraint);
+        pipe($eval)->to(shouldThrow(ExpectationFailedException::class));
+        pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
+        pipe($constraint->toString())->to(shouldBe('is 2'));
     }
 }

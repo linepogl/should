@@ -31,8 +31,8 @@ class IsLikeErrorDetails
      */
     public function prependMessage(string $specialMessage = ''): callable
     {
-        return fn (string $message) =>
-            (
+        return fn(string $message)
+            => (
                 '' === $this->path
                 ? ($this->expected instanceof Constraint ? '' : 'Failed asserting that ' . Util::anyToString($this->actual) . ' is like ' . Util::anyToString($this->expected) . ".\n")
                 : 'Failed asserting that ' . Util::anyToString($this->actual) . ' is like ' . Util::anyToString($this->expected) . ".\n$this->path: "

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Should;
 
-use PHPUnit\Util\Exporter;
-use ReflectionClass;
-use Should\Constraint\Util\CustomAssert;
+use Override;
+use Should\Constraint\Throws;
 use Throwable;
 
 /**
@@ -22,56 +21,25 @@ function shouldThrow(string|Throwable $expected = Throwable::class, string $mess
 /**
  * @template E of Throwable
  */
-class ShouldThrow
+class ShouldThrow extends ShouldSatisfy
 {
     /**
      * @param class-string<E>|E $expected
      */
     public function __construct(
-        private readonly string|Throwable $expected = Throwable::class,
-        private readonly string $message = '',
+        string|Throwable $expected = Throwable::class,
+        string $message = '',
     ) {
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function normalizeException(Throwable $exception): array
-    {
-        $r = [];
-        foreach (new ReflectionClass($exception)->getProperties() as $property) {
-            if ($property->isStatic() || in_array($property->getName(), ['file', 'line', 'trace', 'serializableTrace'])) {
-                continue;
-            }
-            $value = $property->getValue($exception);
-            if ($value instanceof Throwable) {
-                $value = $this->normalizeException($value);
-            }
-            $r[$property->getName()] = $value;
-        }
-        ksort($r);
-        return $r;
+        parent::__construct(new Throws($expected), $message);
     }
 
     /**
      * @param callable():mixed $actual
-     * @return E
+     * @return callable():mixed
      */
-    public function __invoke(mixed $actual): Throwable
+    #[Override]
+    public function __invoke(mixed $actual): callable
     {
-        $class = is_string($this->expected) ? $this->expected : $this->expected::class;
-        $assert = new CustomAssert($this->message);
-        try {
-            $actual();
-        } catch (Throwable $ex) {
-            $assert->assertInstanceOf($class, $ex, "Failed asserting that the thrown exception is an instance of $class.\n" . Exporter::export($ex));
-            if ($this->expected instanceof Throwable) {
-                $exp = $this->normalizeException($this->expected);
-                $act = $this->normalizeException($ex);
-                shouldBe($exp, 'Failed asserting that the two exceptions are equal.')($act);
-            }
-            return $ex; // @phpstan-ignore return.type (narrowing type from Throwable to E)
-        }
-        $assert->fail("Expected $class to be thrown, but nothing was.");
+        return parent::__invoke($actual);
     }
 }

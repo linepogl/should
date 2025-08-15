@@ -35,7 +35,7 @@ class IsTest extends TestCase
     public static function cases(): iterable
     {
         $a = ['a' => 1];
-        $o = (object)$a;
+        $o = (object) $a;
 
         yield 'int === int' => [3, 3];
         yield 'int !== int' => [3, 4, 'Failed asserting that 4 is 3.'];
@@ -84,12 +84,12 @@ class IsTest extends TestCase
         yield 'array != array (order)' => [['a' => 1, 'b' => 2], ['b' => 2, 'a' => 1], 'Failed asserting that two arrays are equal.'];
         yield 'array != array (content)' => [['a' => 1, 'b' => 2], ['a' => 1, 'b' => '2'], 'Failed asserting that two arrays are equal.'];
         yield 'array == array (identical objects)' => [['a' => $o], ['a' => $o]];
-        yield 'array != array (equal objects)' => [['a' => $o], ['a' => (object)['a' => 1]]];
+        yield 'array != array (equal objects)' => [['a' => $o], ['a' => (object) ['a' => 1]]];
 
         yield 'object == object (identical objects)' => [$o, $o];
-        yield 'object == object (equal objects)' => [$o, (object)['a' => 1]];
-        yield 'object != object (content)' => [$o, (object)['a' => '1'], 'Failed asserting that two objects are equal.'];
-        yield 'object != object (content2)' => [$o, (object)['a' => '4'], 'Failed asserting that two objects are equal.'];
+        yield 'object == object (equal objects)' => [$o, (object) ['a' => 1]];
+        yield 'object != object (content)' => [$o, (object) ['a' => '1'], 'Failed asserting that two objects are equal.'];
+        yield 'object != object (content2)' => [$o, (object) ['a' => '4'], 'Failed asserting that two objects are equal.'];
 
         yield 'object != object (subclass)' => [new A('1'), new AA('1'), 'Failed asserting that two objects are equal. Expected class "Tests\Constraint\A" but got "Tests\Constraint\AA".'];
 
@@ -102,16 +102,24 @@ class IsTest extends TestCase
     {
         $constraint = new Is($expected);
         if (null === $error) {
-            shouldNotThrow()(fn () => $constraint->evaluate($actual));
+            shouldNotThrow()(static fn() => $constraint->evaluate($actual));
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));
         } else {
             pipe($constraint->evaluate($actual, '', true))->to(shouldBe(false));
             shouldThrow(Util::expectationFailure($error, $expected, $actual, $expectedAsString, $actualAsString))(
-                fn () => $constraint->evaluate($actual)
+                static fn() => $constraint->evaluate($actual)
             );
             shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, $expectedAsString, $actualAsString, $error))(
-                fn () => $constraint->evaluate($actual, 'Custom message')
+                static fn() => $constraint->evaluate($actual, 'Custom message')
             );
         }
+    }
+
+    public function test_to_string(): void
+    {
+        pipe(new Is(1)->toString())->to(shouldBe('is 1'));
+        pipe(new Is(new Is(10))->toString())->to(shouldBe('is 10'));
+        pipe(new Is([1, 2, 3])->toString())->to(shouldBe('is equal to an array'));
+        pipe(new Is(new DateTime())->toString())->to(shouldBe('is equal to some DateTime'));
     }
 }

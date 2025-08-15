@@ -35,7 +35,7 @@ jobs:
         run: composer run-script phpstan
 
       - name: Unit tests
-        run: composer run-script phpunit
+        run: composer run-script phpunit:coverage
 
       - name: Unit tests PHP 8.5
-        run: composer run-script phpunit:php85
+        run: composer run-script phpunit:php85:coverage

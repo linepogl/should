@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Should\Constraint\Is;
 use Should\Constraint\IsLike;
 use Should\Constraint\Util\Util;
+
 use function Should\shouldBe;
 use function Should\shouldBeUndefined;
 use function Should\shouldMatch;
@@ -53,14 +54,14 @@ class IsLikeTest extends TestCase
     {
         $constraint = new IsLike($expected);
         if (null === $error) {
-            shouldNotThrow()(fn () => $constraint->evaluate($actual));
+            shouldNotThrow()(static fn() => $constraint->evaluate($actual));
             $constraint->evaluate($actual, '', true) |> shouldBe(true);
         } else {
             shouldThrow(Util::expectationFailure($error, $expected, $actual, null, null, $comparisonError))(
-                fn () => $constraint->evaluate($actual)
+                static fn() => $constraint->evaluate($actual)
             );
             shouldThrow(Util::expectationFailure('Custom message', $expected, $actual, null, null, $comparisonError ?? $error))(
-                fn () => $constraint->evaluate($actual, 'Custom message')
+                static fn() => $constraint->evaluate($actual, 'Custom message')
             );
             $constraint->evaluate($actual, '', true) |> shouldBe(false);
         }

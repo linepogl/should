@@ -43,9 +43,9 @@ final class Util
 
     public static function anyToString(mixed $any): string
     {
-        return match(true) {
+        return match (true) {
             null === $any,
-            is_scalar($any) =>  Exporter::export($any),
+            is_scalar($any) => Exporter::export($any),
             is_array($any) => 'an array',
             $any instanceof Constraint => $any->toString(),
             default => 'some ' . get_debug_type($any),

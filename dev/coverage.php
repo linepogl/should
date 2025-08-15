@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $xml = simplexml_load_file($argv[1]);
-if ($xml === false) {
+if (false === $xml) {
     echo 'Failed to parse XML ' . $argv[1] . PHP_EOL;
     exit(1);
 }

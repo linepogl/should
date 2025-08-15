@@ -11,7 +11,6 @@ use PHPUnit\Framework\Constraint\Count;
 use PHPUnit\Framework\Constraint\IsEqual;
 use PHPUnit\Framework\Constraint\IsIdentical;
 use PHPUnit\Framework\Constraint\IsInstanceOf;
-use PHPUnit\Framework\Constraint\IsTrue;
 use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -40,11 +39,6 @@ final class CustomAssert
         );
     }
 
-    public function success(): void
-    {
-        Assert::assertThat(true, new IsTrue());
-    }
-
     /**
      * @param string|(callable(string):string) $message
      */
@@ -63,7 +57,7 @@ final class CustomAssert
     public function fail(string|callable $message = '', ?ComparisonFailure $comparisonFailure = null, ?ExpectationFailedException $previous = null): never
     {
         $comparisonMessage = $previous?->getMessage() ?? '';
-        if (is_string($message) && '' !==   $message) {
+        if (is_string($message) && '' !== $message) {
             $comparisonMessage = $message;
         }
 
@@ -151,6 +145,15 @@ final class CustomAssert
     public function assertIsIterable(mixed $actual, string|callable $message = '', ?ComparisonFailure $comparisonFailure = null): void
     {
         $this->assertThat($actual, new IsType(NativeType::Iterable), $message, $comparisonFailure);
+    }
+
+    /**
+     * @param string|callable(string):string $message
+     * @phpstan-assert callable $actual
+     */
+    public function assertIsCallable(mixed $actual, string|callable $message = '', ?ComparisonFailure $comparisonFailure = null): void
+    {
+        $this->assertThat($actual, new IsType(NativeType::Callable), $message, $comparisonFailure);
     }
 
     /**
