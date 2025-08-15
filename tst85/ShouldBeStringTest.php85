@@ -4,35 +4,29 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use ArrayIterator;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
 use function Should\shouldBe;
-use function Should\shouldNotIterateLike;
+use function Should\shouldBeString;
 use function Should\shouldNotThrow;
 use function Should\shouldThrow;
 
-class ShouldNotIterateLikeTest extends TestCase
+class ShouldBeStringTest extends TestCase
 {
-    public function test_should_not_iterate_like(): void
+    public function test_should_be_string(): void
     {
-        $constraint = shouldNotIterateLike([1, 2, 3]);
-        $constraint->toString() |> shouldBe('does not iterate like an array');
-
-        $actual = new ArrayIterator([1, 2, 3, 4]);
-        $eval = static fn() => $actual |> $constraint;
-        $eval |> shouldNotThrow();
-        $constraint->evaluate($actual, '', true) |> shouldBe(true);
-
-        $actual = [1,2,3];
-        $eval = static fn() => $actual |> $constraint;
-        $eval |> shouldThrow(ExpectationFailedException::class);
-        $constraint->evaluate($actual, '', true) |> shouldBe(false);
+        $constraint = shouldBeString();
+        $constraint->toString() |> shouldBe('is of type string');
 
         $actual = '123';
         $eval = static fn() => $actual |> $constraint;
         $eval |> shouldNotThrow();
         $constraint->evaluate($actual, '', true) |> shouldBe(true);
+
+        $actual = 123;
+        $eval = static fn() => $actual |> $constraint;
+        $eval |> shouldThrow(ExpectationFailedException::class);
+        $constraint->evaluate($actual, '', true) |> shouldBe(false);
     }
 }

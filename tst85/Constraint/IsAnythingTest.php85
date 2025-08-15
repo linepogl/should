@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace Tests\Constraint;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Should\Constraint\IsAnything;
-use Should\Constraint\IsUndefined;
 
 use function Should\shouldBe;
 use function Should\shouldNotThrow;
-use function Should\shouldThrow;
 
 class IsAnythingTest extends TestCase
 {

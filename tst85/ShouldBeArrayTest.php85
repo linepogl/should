@@ -4,35 +4,29 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use ArrayIterator;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
 use function Should\shouldBe;
-use function Should\shouldNotIterateLike;
+use function Should\shouldBeArray;
 use function Should\shouldNotThrow;
 use function Should\shouldThrow;
 
-class ShouldNotIterateLikeTest extends TestCase
+class ShouldBeArrayTest extends TestCase
 {
-    public function test_should_not_iterate_like(): void
+    public function test_should_be_array(): void
     {
-        $constraint = shouldNotIterateLike([1, 2, 3]);
-        $constraint->toString() |> shouldBe('does not iterate like an array');
+        $constraint = shouldBeArray();
+        $constraint->toString() |> shouldBe('is of type array');
 
-        $actual = new ArrayIterator([1, 2, 3, 4]);
+        $actual = [];
         $eval = static fn() => $actual |> $constraint;
         $eval |> shouldNotThrow();
         $constraint->evaluate($actual, '', true) |> shouldBe(true);
 
-        $actual = [1,2,3];
+        $actual = 1;
         $eval = static fn() => $actual |> $constraint;
         $eval |> shouldThrow(ExpectationFailedException::class);
         $constraint->evaluate($actual, '', true) |> shouldBe(false);
-
-        $actual = '123';
-        $eval = static fn() => $actual |> $constraint;
-        $eval |> shouldNotThrow();
-        $constraint->evaluate($actual, '', true) |> shouldBe(true);
     }
 }
