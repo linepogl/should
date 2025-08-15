@@ -6,8 +6,6 @@ namespace Should;
 
 use Override;
 use PHPUnit\Framework\Constraint\IsList;
-use PHPUnit\Framework\Constraint\IsType;
-use PHPUnit\Framework\NativeType;
 
 function shouldBeList(string $message = ''): ShouldBeList
 {

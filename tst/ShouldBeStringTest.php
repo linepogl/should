@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use DateInterval;
-use DateTime;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
-use function Should\shouldBeA;
-use function Should\shouldBeArray;
 use function Should\shouldBeString;
 use function Should\shouldNotThrow;
 use function Should\shouldThrow;
