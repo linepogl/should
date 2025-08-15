@@ -38,4 +38,4 @@ jobs:
         run: composer run-script phpunit:coverage
 
       - name: Unit tests PHP 8.5
-        run: composer run-script phpunit:php85:coverage
+        run: composer run-script phpunit:php85:coverage¹
