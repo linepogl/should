@@ -24,11 +24,11 @@ final class ShouldBeUndefined extends IsUndefined
     /**
      * @template A
      * @param A $actual
+     * @codeCoverageIgnore -- This line is never reached.
      */
     public function __invoke(mixed $actual): void
     {
         Assert::assertThat($actual, $this, $this->message);
-        /** @codeCoverageIgnore -- This line is never reached. */
         throw new LogicException('This line is never reached.');
     }
 }

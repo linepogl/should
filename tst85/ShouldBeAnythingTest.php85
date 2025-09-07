@@ -7,16 +7,16 @@ namespace Tests;
 use PHPUnit\Framework\TestCase;
 
 use function Should\shouldBe;
-use function Should\shouldBeSomething;
+use function Should\shouldBeAnything;
 use function Should\shouldNotThrow;
 
-class ShouldBeSomethingTest extends TestCase
+class ShouldBeAnythingTest extends TestCase
 {
     public function test_should_be_a(): void
     {
         $actual = 1;
 
-        $constraint = shouldBeSomething();
+        $constraint = shouldBeAnything();
         $eval = static fn() => $actual |> $constraint;
         $eval |> shouldNotThrow();
         $constraint->evaluate($actual, '', true) |> shouldBe(true);
