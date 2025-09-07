@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Should;
 
-use Should\Constraint\IsLike;
+use PHPUnitMetaConstraints\IsLike;
 
 function shouldBeLike(mixed $expected, string $message = ''): ShouldBeLike
 {

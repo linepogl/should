@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Should;
 
 use Override;
-use Should\Constraint\IteratesLike;
+use PHPUnitMetaConstraints\IteratesLike;
 
 /**
  * @param iterable<mixed,mixed> $expected

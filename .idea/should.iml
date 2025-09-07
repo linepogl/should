@@ -67,6 +67,7 @@
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/tst85" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/linepogl/impartial-pipes" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/linepogl/phpunit-meta-constraints" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

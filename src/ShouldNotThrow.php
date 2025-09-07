@@ -6,7 +6,7 @@ namespace Should;
 
 use Override;
 use PHPUnit\Framework\Constraint\LogicalNot;
-use Should\Constraint\Throws;
+use PHPUnitMetaConstraints\Throws;
 use Throwable;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Should\Constraint;
+namespace Should;
 
 use PHPUnit\Framework\Constraint\Constraint;
 

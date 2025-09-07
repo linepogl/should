@@ -8,16 +8,16 @@ use PHPUnit\Framework\TestCase;
 
 use function ImpartialPipes\pipe;
 use function Should\shouldBe;
-use function Should\shouldBeSomething;
+use function Should\shouldBeAnything;
 use function Should\shouldNotThrow;
 
-class ShouldBeSomethingTest extends TestCase
+class ShouldBeAnythingTest extends TestCase
 {
     public function test_should_be_a(): void
     {
         $actual = 1;
 
-        $constraint = shouldBeSomething();
+        $constraint = shouldBeAnything();
         $eval = static fn() => pipe($actual)->to($constraint);
         pipe($eval)->to(shouldNotThrow());
         pipe($constraint->evaluate($actual, '', true))->to(shouldBe(true));

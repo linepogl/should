@@ -7,7 +7,6 @@ namespace Should;
 use Override;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Constraint\Constraint;
-use Should\Constraint\InvokableConstraint;
 
 function shouldSatisfy(Constraint $constraint, string $message = ''): ShouldSatisfy
 {

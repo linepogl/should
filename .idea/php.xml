@@ -94,6 +94,7 @@
       <path value="$PROJECT_DIR$/vendor/symfony/string" />
       <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/vendor/linepogl/impartial-pipes" />
+      <path value="$PROJECT_DIR$/vendor/linepogl/phpunit-meta-constraints" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

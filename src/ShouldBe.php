@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Should;
 
-use Should\Constraint\Is;
+use PHPUnitMetaConstraints\Is;
 
 function shouldBe(mixed $expected, string $message = ''): ShouldBe
 {

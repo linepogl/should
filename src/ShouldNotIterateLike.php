@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Should;
 
 use Override;
-use Should\Constraint\IteratesLike;
-use Should\Constraint\Util\Util;
+use PHPUnitMetaConstraints\IteratesLike;
 
 /**
  * @param iterable<mixed,mixed> $expected
@@ -32,6 +31,6 @@ class ShouldNotIterateLike extends ShouldNotSatisfy
     #[Override]
     public function toString(): string
     {
-        return 'does not iterate like ' . Util::anyToString($this->expected);
+        return 'does not iterate like ' . (is_array($this->expected) ? 'an array' : 'some ' . get_debug_type($this->expected));
     }
 }

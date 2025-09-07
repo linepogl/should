@@ -47,7 +47,7 @@
       "src/ShouldNotIterateLike.php",
       "src/ShouldThrow.php",
       "src/ShouldNotThrow.php",
-      "src/ShouldBeSomething.php",
+      "src/ShouldBeAnything.php",
       "src/ShouldBeUndefined.php"
     ]
   },
@@ -58,7 +58,8 @@
   },
   "require": {
     "php": "^8.4",
-    "phpunit/phpunit": "^12.0"
+    "phpunit/phpunit": "^12.0",
+    "linepogl/phpunit-meta-constraints": "^0.2.0"
   },
   "require-dev": {
     "phpstan/phpstan": "^2.1",
