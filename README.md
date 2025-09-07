@@ -9,6 +9,6 @@ A PHPUnit extension with enhanced constraints ready for the pipe operator.
 
 ## Installation
 
-```php
+```
 composer require --dev linepogl/should
 ```
