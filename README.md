@@ -6,3 +6,9 @@ A PHPUnit extension with enhanced constraints ready for the pipe operator.
 'test'
 |> shouldBe('test')
 ```
+
+## Installation
+
+```php
+composer require --dev linepogl/should
+```
